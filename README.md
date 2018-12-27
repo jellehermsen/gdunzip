@@ -10,7 +10,7 @@ Example usage:
 - load a zip file:
   ```var loaded = gdunzip.load('res://PATH_TO_ZIP/test.zip')```
 - if loaded is true you can try to uncompress a file:
-  ```var uncompressed = gdunzip.uncompress('PATH_TO_FILE_IN_ZIP/test.txt')````
+  ```var uncompressed = gdunzip.uncompress('PATH_TO_FILE_IN_ZIP/test.txt')```
 - now you have got a PoolByteArray named "uncompressed" with the
   uncompressed data for the given file
 
