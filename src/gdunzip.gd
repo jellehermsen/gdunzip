@@ -1,16 +1,88 @@
+# MIT License
+# 
+# Copyright (c) 2018 Jelle Hermsen
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+# 
+
+# +-------------------------------------+
+# |           _                 _       |
+# |  __ _  __| |_   _ _ __  ___(_)_ __  |
+# | / _` |/ _` | | | | '_ \|_  / | '_ \ |
+# || (_| | (_| | |_| | | | |/ /| | |_) ||
+# | \__, |\__,_|\__,_|_| |_/___|_| .__/ |
+# | |___/                        |_|    |
+# |                                     |
+# +-------------------------------------+
+# | A small GDScript that allows you to |
+# | browse and uncompress zip files.    |
+# +-------------------------------------+ 
+
+# Example usage:
+#
+# - put gdunzip.gd somewhere in your Godot project
+# - instance this scrip by using:
+#   var gdunzip = load('res://LOCATION_IN_LIBRARY/gdunzip.gd').new()
+# - load a zip file:
+#   var loaded = gdunzip.load('res://PATH_TO_ZIP/test.zip')
+# - if loaded is true you can try to uncompress a file:
+#   var uncompressed = gdunzip.uncompress('PATH_TO_FILE_IN_ZIP/test.txt')
+# - now you have got a PoolByteArray named "uncompressed" with the
+#   uncompressed data for the given file
+#
+# You can iterate over the "files" variable from the gdunzip instance, to
+# see all the available files:
+# - for f in gdunzip.files:
+#       print(f['file_name'])
+
+# The path of the currently loaded zip file
 var path
+
+# A PoolByteArray with the contents of the zip file
 var buffer
+
+# The size of the currently loaded buffer
 var buffer_size
+
+# A dictionary with the files in the currently loaded zip file.
+# It maps full file paths to dictionaries with meta file information:
+#
+# - compression_method: -1 if uncompressed or File.COMPRESSION_DEFLATE
+# - file_name: the full path of the compressed file inside the zip
+# - file_header_offset: the exact byte location of this file's compressed data
+#                       inside the zip file
+# - compressed_size
+# - uncompressed_size
 var files = {}
+
+# The current position we're at inside the buffer
 var pos = 0
+
+# An instance of the inner Tinf class, which is a GDScript port of Jørgen
+# Ibsen's excellent "tiny inflate library"
 var tinf
 
-
-# TODO: cleanup, add docs
-
+# Initialize the gdunzip class
 func _init():
     self.tinf = Tinf.new()
 
+# Load a zip file with the given path. Returns a boolean denoting success.
 func load(path):
     if path == null:
         return false
@@ -40,6 +112,8 @@ func load(path):
     # Fill in self.files with all the file data
     return self._get_files()
 
+# Uncompress the given file. Returns false if uncompressing fails, or when the
+# file isn't available in the currently loaded zip file.
 func uncompress(file_name):
     if !(file_name in self.files):
         return false
@@ -133,18 +207,8 @@ func _get_files():
 
     return true
 
-func _has_file():
-    var signature = buffer.subarray(pos, pos + 4)
-    if !signature || len(signature) < 4:
-        return false
-    else:
-        return (
-            signature[0] == 0x50
-            && signature[1] == 0x4b
-            && signature[2] == 0x03
-            && signature[3] == 0x04
-        )
-
+# Read a given number of bytes from the buffer, and return it as a
+# PoolByteArray
 func _read(length):
     var result = buffer.subarray(pos, pos + length - 1)
     if result.size() != length:
@@ -152,9 +216,12 @@ func _read(length):
     pos = pos + length
     return result
 
+# Skip the given number of bytes in the buffer. Advancing "pos".
 func _skip(length):
     pos += length
 
+# This function skips the file header information, when "pos" points at a file
+# header inside the buffer.
 func _skip_file_header():
     var raw = _read(30)
     if !raw:
@@ -165,6 +232,14 @@ func _skip_file_header():
 
     var raw_end = _skip(file_name_length + extra_field_length)
 
+
+# The inner Tinf class is a pretty straight port from Jørgen Ibsen's excellent
+# "tiny inflate library". It's written in an imperative style and I have tried
+# to stay close to the original. I added two helper functions, and had to make
+# some minor additions to support "faux pointer arithmetic".
+#
+# I have created a TINF_TREE and TINF_DATA dictionary to serve as structs. I
+# use "duplicate" to make an instance from these structs.
 class Tinf:
     # ----------------------------------------
     # -- GDscript specific helper functions --
@@ -172,15 +247,11 @@ class Tinf:
     func make_pool_int_array(size):
         var pool_int_array = PoolIntArray()
         pool_int_array.resize(size)
-        for i in range(0, size):
-            pool_int_array[i] = 0
         return pool_int_array
 
     func make_pool_byte_array(size):
         var pool_byte_array = PoolByteArray()
         pool_byte_array.resize(size)
-        for i in range(0, size):
-            pool_byte_array[i] = 0
         return pool_byte_array
 
     # ------------------------------
@@ -194,6 +265,8 @@ class Tinf:
 
     var TINF_DATA = {
         'source': PoolByteArray(),
+        # sourcePtr is an "int" that's used to point at a location in "source".
+        # I added this since we don't have pointer arithmetic in GDScript.
         'sourcePtr': 0,
 
         'tag': 0,
@@ -201,6 +274,8 @@ class Tinf:
 
         'dest': PoolByteArray(),
         'destLen': 0,
+
+        # "Faux pointer" to dest.
         'destPtr': 0,
 
         'ltree': TINF_TREE.duplicate(),
@@ -258,7 +333,6 @@ class Tinf:
     # build the fixed huffman trees
     # lt: TINF_TREE
     # rt: TINF_TREE
-    # CHECKED
     func tinf_build_fixed_trees(lt, dt):
         var i = 0
 
@@ -295,7 +369,7 @@ class Tinf:
         var i = 0
         var sum = 0
 
-        # lear code length count table
+        # clear code length count table
         for i in range(0,16):
             t['table'][i] = 0
 
@@ -320,8 +394,7 @@ class Tinf:
 
     # get one bit from source stream
     # d: TINF_DATA
-    # @returns: int
-    # CHECKED
+    # returns: int
     func tinf_getbit(d):
         var bit = 0
 
@@ -340,7 +413,6 @@ class Tinf:
     # d: TINF_DATA
     # num: int
     # base: int
-    # CHECKED
     func tinf_read_bits(d, num, base):
         var val = 0
 
@@ -352,6 +424,7 @@ class Tinf:
                 if tinf_getbit(d):
                     val += mask
                 mask *= 2
+
         return val + base
 
     # given a data stream and a tree, decode a symbol
@@ -363,8 +436,7 @@ class Tinf:
         var length = 0
 
         while true:
-            var b = tinf_getbit(d)
-            cur = 2 * cur + b #tinf_getbit(d)
+            cur = 2 * cur + tinf_getbit(d)
             length += 1
             sum += t['table'][length]
             cur -= t['table'][length]
@@ -404,10 +476,8 @@ class Tinf:
 
         # build code length tree
         tinf_build_tree(code_tree, lengths, 19)
-        var count = 0;
 
         while num < hlit + hdist:
-            count += 1
             var sym = tinf_decode_symbol(d, code_tree)
 
             match sym:
@@ -441,8 +511,6 @@ class Tinf:
     # -----------------------------
     # -- block inflate functions --
     # -----------------------------
-
-    # static int tinf_inflate_block_data(TINF_DATA *d, TINF_TREE *lt, TINF_TREE *dt)
 
     # given a stream and two trees, inflate a block of data
     # d: TINF_DATA

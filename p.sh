@@ -1,2 +1,2 @@
 #!/bin/bash
-godot -s test/test.gd
+make tests
