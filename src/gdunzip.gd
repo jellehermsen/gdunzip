@@ -126,6 +126,17 @@ func uncompress(file_name):
         return uncompressed
     return tinf.tinf_uncompress(f['uncompressed_size'], uncompressed)
 
+# Returns a PoolByteArray with the compressed data for the given file.
+# Returns false if it can't be found.
+func get_compressed(file_name):
+    if !(file_name in self.files):
+        return false
+
+    var f = self.files[file_name]
+    self.pos = f['file_header_offset']
+    self._skip_file_header()
+    return self._read(f['compressed_size'])
+
 # Parse the zip file's central directory and fill self.files with all the
 # file info
 func _get_files():
