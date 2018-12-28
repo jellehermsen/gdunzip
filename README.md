@@ -2,11 +2,12 @@ gdunzip
 =======
 
 Gdunzip is a  zip file browser/decompressor written entirely in a single
-GDScript, for usage in the Godot game engine. This script is meant for modest
-zip decompressing purposes, since the inflate algorithm it contains isn't super
-fast and gdunzip doesn't do crc checken of the uncompressed files. However,
-gdunzip works fine if you only need to decompress small files, or when your zip
-files contain precompressed files like png's.
+GDScript file. You can use this in games your building with the Godot game
+engine. This script is meant for modest zip decompressing purposes, since the
+inflate algorithm it contains isn't super fast and gdunzip doesn't do CRC
+checks of the uncompressed files. However, gdunzip works fine if you only need
+to decompress small files, or when your zip files contain precompressed files
+like png's.
 
 In order to create gdunzip, I have made a GDScript port of Jørgen Ibsen's
 excellent tiny inflate library: [tinf](https://bitbucket.org/jibsen/tinf) for
