@@ -2,7 +2,7 @@ gdunzip
 =======
 
 Gdunzip is a  zip file browser/decompressor written entirely in a single
-GDScript file. You can use this in games your building with the Godot game
+GDScript file. You can use this in games you're building with the Godot game
 engine. This script is meant for modest zip decompressing purposes, since the
 inflate algorithm it contains isn't super fast and gdunzip doesn't do CRC
 checks of the uncompressed files. However, gdunzip works fine if you only need
@@ -23,7 +23,7 @@ Why I wrote gdunzip
 -------------------
 I'm working on a little sideproject in Godot: a memorize app. In this app I
 will allow the user to import an ODS-file: the spreadsheet file format used by
-Libre Office and Open Office. ODS-files are actually zip files, containing a
+LibreOffice and OpenOffice. ODS-files are actually zip files, containing a
 bunch of xml files and some other assets. I couldn't find a ready-made ODS
 library for Godot, so I set out creating one. It would have been faster to just
 use GDNative and hand all the work to a C++ library, but since this is a hobby
@@ -63,7 +63,7 @@ else:
     print('Failed loading zip file')
 ```
 
-- When gdunzip has loaded a zip file, you can iterate all the files inside, by
+- When gdunzip has loaded a zip file, you can iterate over all the files inside, by
   looping through the "files" attribute:
 ```gdscript
 for f in gdunzip.files:
