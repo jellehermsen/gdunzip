@@ -636,7 +636,6 @@ class Tinf:
         var sourceSize = source.size()
         d['source'] = source
         d['dest'] = dest
-        var bfinal = 0
 
         destLen = 0
 
@@ -644,8 +643,8 @@ class Tinf:
             var btype = 0
             var res = 0
 
-            # read final block flag
-            bfinal = tinf_getbit(d)
+            # Skip final block flag
+            tinf_getbit(d)
 
             # read block type (2 bits)
             btype = tinf_read_bits(d, 2, 0)
@@ -665,7 +664,8 @@ class Tinf:
             if res != TINF_OK:
                 return false
 
-            if bfinal == 0 || d['sourcePtr'] >= sourceSize:
+            # When we have consumed the entire source, we're done
+            if d['sourcePtr'] >= sourceSize:
                 break
 
         return d['dest']
