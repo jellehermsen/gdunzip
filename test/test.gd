@@ -18,6 +18,9 @@ func _init():
         'manifest.rdf': 'ea9300f431c910e10f0da4810cd87433',
         'Thumbnails/thumbnail.png': 'ed3d7e2902dddfb950c0130b1cbc4c49',
     })
+    _test('Extracting Alice', 'res://test/alice.zip', {
+        'alice.txt': '75b098332aa8419a72bf0b78ee73dc42',
+    })
     quit()
 
 func _green_text(text):
@@ -59,7 +62,6 @@ func _test(test_name, zip_file, files):
 
         if md5 != files[file]:
             print(_red_text('✗') + ' Failed uncompressing. MD5 of uncompressed ' + file + ' does not match')
-            print(md5)
             success = false
             continue
 

@@ -93,12 +93,12 @@ func load(path):
     var file = File.new()
 
     if !file.file_exists(path):
-        return print('Error')
+        return false
 
     file.open(path, File.READ)
     var file_length = file.get_len()
     if file.get_32() != 0x04034b50:
-        return print('Error')
+        return false
 
     file.seek(0)
     self.buffer = file.get_buffer(file_length)
@@ -570,7 +570,7 @@ class Tinf:
 
         # get length
         length = d['source'][d['sourcePtr'] + 1]
-        length = 256 * length + d['source'][0]
+        length = 256 * length + d['source'][d['sourcePtr']]
 
         # get one's complement of length
         invlength = d['source'][d['sourcePtr'] + 3]
@@ -621,7 +621,6 @@ class Tinf:
        tinf_build_fixed_trees(sltree, sdtree)
 
        # build extra bits and base tables
-       # ERROR POSSIBLY
        tinf_build_bits_base('length', 4, 3)
        tinf_build_bits_base('dist', 2, 1)
 
@@ -634,6 +633,7 @@ class Tinf:
     func tinf_uncompress(destLen, source):
         var d = TINF_DATA.duplicate()
         var dest = make_pool_byte_array(destLen)
+        var sourceSize = source.size()
         d['source'] = source
         d['dest'] = dest
         var bfinal = 0
@@ -660,12 +660,12 @@ class Tinf:
                     # decompress block with dynamic huffman trees
                     res = tinf_inflate_dynamic_block(d)
                 _:
-                    return TINF_DATA_ERROR
+                    return false
 
             if res != TINF_OK:
                 return false
 
-            if bfinal == 0:
+            if bfinal == 0 || d['sourcePtr'] >= sourceSize:
                 break
 
-            return d['dest']
+        return d['dest']
