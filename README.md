@@ -77,3 +77,45 @@ for f in gdunzip.files:
 
     print('Uncompressed size: ' + str(f['uncompressed_size']))
 ```
+
+Class documentation
+-------------------
+
+### Member functions
+| Returns                          | Function name          |
+| -------------------------------- | ---------------------- |
+| bool                             | load(String path)      |
+| PoolByteArray                    | uncompress(String file_name)|
+| PoolByteArray | get_compressed(String file_name) |
+
+### Member function description
+
+- bool **load**(String path)
+
+Tries to load a zip file with a given path. Returns false if it failed
+loading the zip, or true if it was successfull.
+
+- PoolByteArray **uncompress**(String file_name)
+
+Try to uncompress the given file in the loaded zip. The file_name can include
+directories. This function returns *false* if the file can't be found, or if
+there's an error during uncompression. 
+
+- PoolByteArray **get_compressed**(String file_name)
+
+Returns the compressed data for a given file name (or false if the file can't
+be found). Depending on the file compression it can be either uncompressed or a
+raw deflate stream. This function returns *false* if the file can't be found.
+
+### files attribute
+After you have loaded a file, the gdunzip instance will have a pre-filled
+"files" attribute. This is simply an dictionary containing the meta data for
+the files that reside in the zip. The dictionary is a mapping from file name
+(including directory) to another directory with the following keys:
+
+- file_name: the file name
+- compression_method: -1 if uncompressed or File.COMPRESSION_DEFLATE
+- file_header_offset: the exact byte location of this file's compressed data
+  inside the zip file
+- compressed_size: the compressed file size in bytes
+- uncompressed_size: the uncompressed file size in bytes

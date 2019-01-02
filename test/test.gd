@@ -36,7 +36,7 @@ func _red_text(text):
 func _test(test_name, zip_file, files):
     print('[' + test_name + ']')
 
-    var gdunzip = load('res://src/gdunzip.gd').new()
+    var gdunzip = load('res://addons/gdunzip/gdunzip.gd').new()
     var loaded = gdunzip.load(zip_file)
 
     if !loaded:
