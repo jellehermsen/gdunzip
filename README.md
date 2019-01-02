@@ -47,7 +47,7 @@ Using gdunzip
 
 ```gdscript
 # Instance the gdunzip script
-var gdunzip = load('res://PATH_TO_SCRIPT/gdunzip.gd').new()
+var gdunzip = load('res://addons/gdunzip/gdunzip.gd').new()
 
 # Load a zip file
 var loaded = gdunzip.load('res://test.zip')
@@ -112,7 +112,7 @@ raw deflate stream. This function returns *false* if the file can't be found.
 After you have loaded a file, the gdunzip instance will have a pre-filled
 "files" attribute. This is simply an dictionary containing the meta data for
 the files that reside in the zip. The dictionary is a mapping from file name
-(including directory) to another directory with the following keys:
+(including directory) to another dictionary with the following keys:
 
 - file_name: the file name
 - compression_method: -1 if uncompressed or File.COMPRESSION_DEFLATE
