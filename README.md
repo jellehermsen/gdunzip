@@ -40,7 +40,8 @@ dive in and gdunzip is the result :-).
 
 Using gdunzip
 -------------
-- Grab [gdunzip.gd](https://raw.githubusercontent.com/jellehermsen/gdunzip/master/src/gdunzip.gd).
+- Grab
+  [gdunzip.gd](https://raw.githubusercontent.com/jellehermsen/gdunzip/master/addons/gdunzip/gdunzip.gd).
 - Put gdunzip.gd somewhere in your Godot project.
 - Make an instance, load a file and start uncompressing:
 
