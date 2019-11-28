@@ -1,7 +1,7 @@
 extends SceneTree
 
 func _init():
-    var escape = PoolByteArray([0x1b]).get_string_from_ascii()
+    var escape = PoolByteArray([0x1B]).get_string_from_ascii()
 
     _test('Extracting a single small text file', 'res://test/lorem.zip', { 
         'lorem.txt': '705e5a1242c9955ae2651effa14e2f57', 
@@ -24,12 +24,12 @@ func _init():
     quit()
 
 func _green_text(text):
-    var escape = PoolByteArray([0x1b]).get_string_from_ascii()
+    var escape = PoolByteArray([0x1B]).get_string_from_ascii()
     var code = "[1;32m"
     return escape + code + text + escape + '[0;0m'
 
 func _red_text(text):
-    var escape = PoolByteArray([0x1b]).get_string_from_ascii()
+    var escape = PoolByteArray([0x1B]).get_string_from_ascii()
     var code = "[1;31m"
     return escape + code + text + escape + '[0;0m'
 

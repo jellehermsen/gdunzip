@@ -97,7 +97,7 @@ func load(path):
 
     file.open(path, File.READ)
     var file_length = file.get_len()
-    if file.get_32() != 0x04034b50:
+    if file.get_32() != 0x04034B50:
         return false
 
     file.seek(0)
@@ -145,9 +145,9 @@ func _get_files():
 
     while (
         eocd_offset > 0
-        && buffer[eocd_offset+3] != 0x06 
-        && buffer[eocd_offset+2] != 0x05 
-        && buffer[eocd_offset+1] != 0x4b 
+        && buffer[eocd_offset+3] != 0x06
+        && buffer[eocd_offset+2] != 0x05
+        && buffer[eocd_offset+1] != 0x4B
         && buffer[eocd_offset] != 0x50
     ):
         eocd_offset -= 1
@@ -165,7 +165,7 @@ func _get_files():
     while (
         buffer[pos + 3] == 0x02
         && buffer[pos + 2] == 0x01
-        && buffer[pos + 1] == 0x4b
+        && buffer[pos + 1] == 0x4B
         && buffer[pos] == 0x50
     ):
         var raw = _read(46)
@@ -576,7 +576,7 @@ class Tinf:
         invlength = d['source'][d['sourcePtr'] + 3]
         invlength = 256 * invlength + d['source'][d['sourcePtr'] + 2]
 
-        if length != ~invlength & 0x0000ffff:
+        if length != ~invlength & 0x0000FFFF:
             return TINF_DATA_ERROR
 
         d['sourcePtr'] += 4
