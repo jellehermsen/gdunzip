@@ -145,10 +145,11 @@ func _get_files():
 
     while (
         eocd_offset > 0
-        && buffer[eocd_offset+3] != 0x06
-        && buffer[eocd_offset+2] != 0x05
-        && buffer[eocd_offset+1] != 0x4B
-        && buffer[eocd_offset] != 0x50
+        && not (buffer[eocd_offset+3] == 0x06
+            && buffer[eocd_offset+2] == 0x05
+            && buffer[eocd_offset+1] == 0x4B
+            && buffer[eocd_offset] == 0x50
+        )
     ):
         eocd_offset -= 1
 
