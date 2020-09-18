@@ -329,7 +329,6 @@ class Tinf:
     # delta: int
     # first: int
     func tinf_build_bits_base(target, delta, first):
-        var i = 0
         var sum = first
 
         for i in range(0, delta):
@@ -346,8 +345,6 @@ class Tinf:
     # lt: TINF_TREE
     # rt: TINF_TREE
     func tinf_build_fixed_trees(lt, dt):
-        var i = 0
-
         for i in range(0, 7):
             lt['table'][i] = 0
 
@@ -378,7 +375,6 @@ class Tinf:
     # num: int
     func tinf_build_tree(t, lengths, num):
         var offs = make_pool_int_array(16)
-        var i = 0
         var sum = 0
 
         # clear code length count table
@@ -466,7 +462,6 @@ class Tinf:
         var hlit = 0
         var hdist = 0
         var hclen = 0
-        var i = 0
         var num = 0
         var length = 0
 
@@ -545,7 +540,6 @@ class Tinf:
                 var length = 0
                 var dist = 0
                 var offs = 0
-                var i = 0
                 var ptr = d['destPtr']
 
                 sym -= 257
