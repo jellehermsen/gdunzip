@@ -525,16 +525,18 @@ class Tinf:
     # dt: TINF_TREE
     func tinf_inflate_block_data(d, lt, dt):
         var start = d['destPtr']
+        var dest = d['dest']
 
         while true:
             var sym = tinf_decode_symbol(d, lt)
 
             if sym == 256:
                 d['destLen'] += d['destPtr'] - start
+                d['dest'] = dest
                 return TINF_OK
 
             if sym < 256:
-                d['dest'][d['destPtr']] = sym
+                dest[d['destPtr']] = sym
                 d['destPtr'] += 1
             else:
                 var length = 0
@@ -551,10 +553,10 @@ class Tinf:
                 offs = tinf_read_bits(d, base_tables['dist_bits'][dist], base_tables['dist_base'][dist])
 
                 for i in range(0, length):
-                    d['dest'][ptr + i] = d['dest'][ptr + (i - offs)]
+                    dest[ptr + i] = dest[ptr + (i - offs)]
 
                 d['destPtr'] += length
-
+        d['dest'] = dest
 
     # inflate an uncompressed block of data */
     # d: TINF_DATA
