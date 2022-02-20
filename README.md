@@ -67,7 +67,7 @@ else:
 - When gdunzip has loaded a zip file, you can iterate over all the files inside, by
   looping through the "files" attribute:
 ```gdscript
-for f in gdunzip.files:
+for f in gdunzip.files.values():
     print('File name: ' + f['file_name'])
 
     # "compression_method" will be either -1 for uncompressed data, or
