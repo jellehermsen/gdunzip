@@ -3,5 +3,8 @@
 *.swp
 *.swo
 
+logs/
+
 # Quick test bash script
 p.sh
+
