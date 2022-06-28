@@ -1,7 +1,7 @@
 extends SceneTree
 
 func _init():
-    var gdunzip = load('res://src/gdunzip.gd').new()
+    var gdunzip = load('res://addons/gdunzip/gdunzip.gd').new()
     var loaded = gdunzip.load('res://test/alice.zip')
 
     if !loaded:
